@@ -1,6 +1,19 @@
+import { useState } from "react";
 import { ProjectCard } from "./ProjectCard";
+import { AddProjectForm } from "./AddProjectForm";
 
-const projects = [
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  tags: string[];
+  liveUrl?: string;
+  githubUrl?: string;
+  stars?: number;
+}
+
+const initialProjects: Project[] = [
   {
     id: 1,
     title: "AI Task Manager",
@@ -64,16 +77,30 @@ const projects = [
 ];
 
 export const ProjectsGrid = () => {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
+
+  const handleAddProject = (newProject: Omit<Project, 'id'>) => {
+    const project: Project = {
+      ...newProject,
+      id: Math.max(...projects.map(p => p.id)) + 1
+    };
+    setProjects(prev => [project, ...prev]);
+  };
+
   return (
     <section className="py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">
-            Featured Projects
+            Мои проекты
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore a curated collection of innovative projects showcasing modern web technologies
+            Коллекция инновационных проектов с современными веб-технологиями
           </p>
+        </div>
+        
+        <div className="text-center">
+          <AddProjectForm onAddProject={handleAddProject} />
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
